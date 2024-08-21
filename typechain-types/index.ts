@@ -26,8 +26,10 @@ export type { ERC165 } from "./@openzeppelin/contracts/utils/introspection/ERC16
 export { ERC165__factory } from "./factories/@openzeppelin/contracts/utils/introspection/ERC165__factory";
 export type { IERC165 } from "./@openzeppelin/contracts/utils/introspection/IERC165";
 export { IERC165__factory } from "./factories/@openzeppelin/contracts/utils/introspection/IERC165__factory";
-export type { ITokenERC20 } from "./contracts/MyContract.sol/ITokenERC20";
-export { ITokenERC20__factory } from "./factories/contracts/MyContract.sol/ITokenERC20__factory";
+export type { ITokenERC20 } from "./contracts/MainContract.sol/ITokenERC20";
+export { ITokenERC20__factory } from "./factories/contracts/MainContract.sol/ITokenERC20__factory";
+export type { MainContract } from "./contracts/MainContract.sol/MainContract";
+export { MainContract__factory } from "./factories/contracts/MainContract.sol/MainContract__factory";
 export type { MyContract } from "./contracts/MyContract.sol/MyContract";
 export { MyContract__factory } from "./factories/contracts/MyContract.sol/MyContract__factory";
 export type { TokenERC20 } from "./contracts/TokenERC20";
