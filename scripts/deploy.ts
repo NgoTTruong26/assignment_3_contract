@@ -1,7 +1,7 @@
 // npx hardhat run scripts/deploy.ts --network tBSC
 import { artifacts, ethers } from 'hardhat';
 import path from 'path';
-import { MainContract, TokenERC20 } from '../typechain-types';
+import { MainContract, TokenERC20, TokenERC721 } from '../typechain-types';
 
 async function main() {
   // ethers is available in the global scope
@@ -19,21 +19,30 @@ async function main() {
 
   console.log('Token ERC20 contract deployed to:', tokenERC20.address);
 
+  const TokenERC721Factory = await ethers.getContractFactory('TokenERC721');
+  const tokenERC721 = await TokenERC721Factory.deploy('My NFT', 'MNFT');
+  await tokenERC721.deployed();
+
+  console.log('Token ERC721 contract deployed to:', tokenERC721.address);
+
   const MainContractFactory = await ethers.getContractFactory('MainContract');
   const mainContract = await MainContractFactory.deploy(
     tokenERC20.address,
-    'My NFT',
-    'MNFT',
+    tokenERC721.address,
   );
   await mainContract.deployed();
   console.log('Main Contract deployed to:', mainContract.address);
 
   // We also save the contract's artifacts and address in the frontend directory
   saveFrontendFiles(tokenERC20, 'TokenERC20');
+  saveFrontendFiles(tokenERC721, 'TokenERC721');
   saveFrontendFiles(mainContract, 'MainContract');
 }
 
-function saveFrontendFiles(token: TokenERC20 | MainContract, name: string) {
+function saveFrontendFiles(
+  token: TokenERC20 | TokenERC721 | MainContract,
+  name: string,
+) {
   const fs = require('fs');
   const contractsDir = path.join(
     __dirname,

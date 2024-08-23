@@ -4,3 +4,4 @@
 export * as mainContractSol from "./MainContract.sol";
 export * as myContractSol from "./MyContract.sol";
 export { TokenERC20__factory } from "./TokenERC20__factory";
+export { TokenERC721__factory } from "./TokenERC721__factory";

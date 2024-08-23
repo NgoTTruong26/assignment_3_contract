@@ -3,59 +3,110 @@ pragma solidity ^0.8.17;
 
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 interface ITokenERC20 is IERC20 {
-    function mint(address to, uint256 amount) external;
+    function mint(address to, uint amount) external;
     function decimals() external view returns (uint8);
 }
+interface ITokenERC721 is IERC721 {
+    function mint(address to) external;
+}
 
-contract MainContract is ERC721, Ownable {
+contract MainContract is Ownable, IERC721Receiver {
 
-    string private _name;
-    string private _symbol;
+    uint8 private _APR = 8;
+    uint8 private _BaseAPRIncrement = 2;
 
-    uint32 private constant _LOCK_TIME = 5 minutes;
+    uint32 private constant _LOCK_TIME = 5 seconds;
     
-    uint public constant _THRESHOLD = 1000000;
-    uint private _NFTIdCounter;
-    uint private _APR = 8;
-    uint private _BaseAPRIncrement = 2;
-    uint private _APRIncrement = 0;
+    uint private constant _THRESHOLD = 1000000;
+    uint private _EventCounter = 0;
 
     ITokenERC20 private _tokenErc20; 
-
-    struct NFTInfo {
-        string name;
-        string symbol;
-        uint256 balance;
-    }
+    ITokenERC721 private _tokenErc721;
     
     struct Deposit {
+        uint8 APRIncrement;
         uint amount;
         uint accumulatedInterest;
         uint depositTime;
         uint lastInterestTime;
     }
 
-    mapping (address => Deposit) userDeposits;
-    mapping (address => uint[]) userDepositNFTs;
-
-    event Deposited(address indexed user, uint amount);
-    event NFTDeposited(address indexed user, uint indexed NFTId);
-    event Withdrew(address indexed user, uint amount);
-    event NFTWithdrew(address indexed user, uint indexed NFTId);
-    event Claimed(address indexed user, uint reward);
-
-
-    constructor(address tokenErc20, string memory name, string memory symbol) ERC721(_name, _symbol) {
-        _tokenErc20 = ITokenERC20(tokenErc20);
-        _name = name;
-        _symbol = symbol;
+    struct DepositTokenInfo {
+        address user;        
+        uint amount;      
+    }
+    struct DepositNFTInfo {
+        address user;        
+        uint NFTId;   
+    }
+    struct WithdrawERC20Info {
+        address user;        
+        uint amount;    
+    }
+    struct WithdrawNFTInfo {
+        address user;        
+        uint NFTId;           
     }
 
-    modifier updateInterest(address user) {
+    struct ClaimRewardInfo {
+        address user;        
+        uint amount;      
+    }
+    struct TransferERC20Info {
+        address from;        
+        address to;          
+        uint amount;      
+    }
+    struct TransferNFTInfo {
+        address from;        
+        address to;         
+        uint NFTId;     
+    }
+
+    struct EventInfo {
+
+        DepositTokenInfo depositToken;
+        DepositNFTInfo depositNFT;
+        WithdrawERC20Info withdrawERC20;
+        WithdrawNFTInfo withdrawNFT;
+        ClaimRewardInfo claimReward;
+        TransferERC20Info transferERC20;
+        TransferNFTInfo transferNFT;
+
+        bool successful;
+        uint timestamp;
+    }
+
+    mapping (address => Deposit) userDeposits;
+    mapping (address => uint[]) userDepositNFTs;
+    mapping (uint => EventInfo) eventsInfo;
+
+    event NFTReceived(address operator, address from, uint tokenId, bytes data);
+
+
+    constructor(address tokenErc20, address tokenErc721) {
+        _tokenErc20 = ITokenERC20(tokenErc20);
+        _tokenErc721 = ITokenERC721(tokenErc721);
+    }
+
+    function onERC721Received(
+        address operator,
+        address from,
+        uint tokenId,
+        bytes calldata data
+    ) external override returns (bytes4) {
+        
+        emit NFTReceived(operator, from, tokenId, data);
+
+        return this.onERC721Received.selector;
+    }
+
+    function updateInterest(address user) public {
         Deposit storage userDeposit = userDeposits[user];
         
         if (userDeposit.amount > 0) {
@@ -64,112 +115,176 @@ contract MainContract is ERC721, Ownable {
             if (timeSinceLastInterest >= 1 days) {
                 uint daysElapsed = timeSinceLastInterest / 1 days;
 
-                uint dailyInterest = (userDeposit.amount * (_APR + _APRIncrement) / 100) * daysElapsed / 365;
+                uint dailyInterest = (userDeposit.amount * (_APR + userDeposit.APRIncrement) / 100) * daysElapsed / 365;
 
                 userDeposit.accumulatedInterest += dailyInterest;
 
                 userDeposit.lastInterestTime += daysElapsed * 1 days;
             }
         }
-
-        _;
     }
 
     function depositToken(uint amount) external {
+        updateInterest(msg.sender);
+
         require(amount > 0, "Amount must be greater than 0");
-        require(_tokenErc20.transferFrom(msg.sender, address(this), amount), "Transfer failed");
 
-        userDeposits[msg.sender].amount += amount;
-        userDeposits[msg.sender].depositTime = block.timestamp;
+        
+        EventInfo storage eventInfo = eventsInfo[_EventCounter];
 
-        if (balanceOf(msg.sender)==0 && userDeposits[msg.sender].amount >= _THRESHOLD * 10 ** _tokenErc20.decimals()) {
-            _mintNFT(msg.sender);
+        try _tokenErc20.transferFrom(msg.sender, address(this), amount) {
+
+            userDeposits[msg.sender].amount += amount;
+            userDeposits[msg.sender].depositTime = block.timestamp;
+
+            if (_tokenErc721.balanceOf(msg.sender)==0 && userDeposits[msg.sender].amount >= _THRESHOLD * 10 ** _tokenErc20.decimals()) {
+                _tokenErc721.mint(msg.sender);
+            }
+
+            if (userDeposits[msg.sender].lastInterestTime == 0) {
+                userDeposits[msg.sender].lastInterestTime = block.timestamp;
+            }
+            
+            eventInfo.depositToken = DepositTokenInfo(msg.sender, amount);
+            eventInfo.successful = true;
+            eventInfo.timestamp = block.timestamp;
+            _EventCounter += 1;
+            
+        } catch  {
+            eventInfo.depositToken = DepositTokenInfo(msg.sender, amount);
+            eventInfo.successful = true;
+            eventInfo.timestamp = block.timestamp;
+            _EventCounter += 1;
         }
 
-        if (userDeposits[msg.sender].lastInterestTime == 0) {
-            userDeposits[msg.sender].lastInterestTime = block.timestamp;
-        }
-
-        emit Deposited(msg.sender, amount);
     }
 
     function depositNFT(uint NFTId) external {
-        safeTransferFrom(msg.sender, address(this), NFTId);
+        updateInterest(msg.sender);
         
-        userDepositNFTs[msg.sender].push(NFTId);
-        _APRIncreasePerNFT(userDepositNFTs[msg.sender].length);
+        EventInfo storage eventInfo = eventsInfo[_EventCounter];
 
-        emit NFTDeposited(msg.sender, NFTId);
+        try _tokenErc721.safeTransferFrom(msg.sender, address(this), NFTId) {
+
+            uint[] storage userDepositNFT = userDepositNFTs[msg.sender];
+        
+            userDepositNFT.push(NFTId);
+            userDeposits[msg.sender].APRIncrement += _BaseAPRIncrement;
+
+            eventInfo.depositNFT = DepositNFTInfo(msg.sender, NFTId);
+            eventInfo.successful = true;
+            eventInfo.timestamp = block.timestamp;
+            _EventCounter += 1;
+        } catch  {
+            eventInfo.depositNFT = DepositNFTInfo(msg.sender, NFTId);
+            eventInfo.successful = false;
+            eventInfo.timestamp = block.timestamp;
+            _EventCounter += 1;
+        } 
     }
 
     function withdraw(uint amount) external {
+        updateInterest(msg.sender);
+        
         Deposit storage userDeposit = userDeposits[msg.sender];
         require(block.timestamp >= userDeposit.depositTime + _LOCK_TIME, "Tokens are still locked");
         require(amount > 0, "Amount must be greater than 0");
-        require(_tokenErc20.transfer(msg.sender, amount), "Transfer failed");
 
-        userDeposit.amount -= amount;
+        
+        EventInfo storage eventInfo = eventsInfo[_EventCounter];
 
-        emit Withdrew(msg.sender, amount);
+        try _tokenErc20.transfer(msg.sender, amount) {
+            userDeposit.amount -= amount;
+
+            eventInfo.withdrawERC20 = WithdrawERC20Info(msg.sender, amount);
+            eventInfo.successful = true;
+            eventInfo.timestamp = block.timestamp;
+            _EventCounter += 1;
+        } catch  {
+            eventInfo.withdrawERC20 = WithdrawERC20Info(msg.sender, amount);
+            eventInfo.successful = false;
+            eventInfo.timestamp = block.timestamp;
+            _EventCounter += 1;
+        }
     }
 
     function withdrawNFT(uint index) external {
-        require(index < userDepositNFTs[msg.sender].length, "Invalid NFT index");
+        updateInterest(msg.sender);
 
-        uint256 NFTId = userDepositNFTs[msg.sender][index];
+        uint[] storage userDepositNFT = userDepositNFTs[msg.sender];
 
-        userDepositNFTs[msg.sender][index] = userDepositNFTs[msg.sender][userDepositNFTs[msg.sender].length - 1];
-        userDepositNFTs[msg.sender].pop();
+        require(index < userDepositNFT.length, "Invalid NFT index");
 
-        safeTransferFrom(address(this), msg.sender, NFTId);
+        uint NFTId = userDepositNFT[index];
 
-        _APRIncreasePerNFT(userDepositNFTs[msg.sender].length);
+        userDepositNFT[index] = userDepositNFT[userDepositNFT.length - 1];
+        userDepositNFT.pop();
 
-        emit NFTWithdrew(msg.sender, NFTId);
+        
+        EventInfo storage eventInfo = eventsInfo[_EventCounter];
+
+        try _tokenErc721.safeTransferFrom(address(this), msg.sender, NFTId) {
+            userDeposits[msg.sender].APRIncrement -= _BaseAPRIncrement;
+            
+            eventInfo.withdrawNFT = WithdrawNFTInfo(msg.sender, NFTId);
+            eventInfo.successful = true;
+            eventInfo.timestamp = block.timestamp;
+            _EventCounter += 1;
+        } catch  {
+            eventInfo.withdrawNFT = WithdrawNFTInfo(msg.sender, NFTId);
+            eventInfo.successful = false;
+            eventInfo.timestamp = block.timestamp;
+            _EventCounter += 1;
+        }
+        
     }
-
 
     function claimReward() external {
+        updateInterest(msg.sender);
+
         Deposit storage userDeposit = userDeposits[msg.sender];
         require(userDeposit.accumulatedInterest > 0, "Accumulated interest must be greater than 0");
-        require(_tokenErc20.transfer(msg.sender, userDeposit.accumulatedInterest), "Transfer failed");
 
-        userDeposit.accumulatedInterest = 0;
+        
+        EventInfo storage eventInfo = eventsInfo[_EventCounter];
 
-        emit Claimed(msg.sender, userDeposit.accumulatedInterest);
+        try _tokenErc20.transfer(msg.sender, userDeposit.accumulatedInterest) {
+
+            eventInfo.claimReward = ClaimRewardInfo(msg.sender, userDeposit.accumulatedInterest);
+            eventInfo.successful = true;
+            eventInfo.timestamp = block.timestamp;
+            _EventCounter += 1;
+
+            userDeposit.accumulatedInterest = 0;
+        } catch  {
+            eventInfo.claimReward = ClaimRewardInfo(msg.sender, userDeposit.accumulatedInterest);
+            eventInfo.successful = false;
+            eventInfo.timestamp = block.timestamp;
+            _EventCounter += 1;
+        }
+
+       
     }
 
-    function _mintNFT(address to) internal {
-        _NFTIdCounter += 1;
-        _safeMint(to, _NFTIdCounter);
-        emit NFTDeposited(to, _NFTIdCounter);
-    }
-
-    function _APRIncreasePerNFT(uint NFTCount) private {
-        _APRIncrement = _BaseAPRIncrement * NFTCount;
-    }
-
-    function setAPR(uint APR) external onlyOwner() {
+    function setAPR(uint8 APR) external onlyOwner() {
         _APR = APR;
+    }
+
+    function getAPR() external view returns (uint) {
+        return _APR;
+    }
+
+    function getEventInfo(uint index) external view returns (EventInfo memory) {
+        return eventsInfo[index];
     }
 
     function depositOf(address account) external view returns (Deposit memory) {
         return userDeposits[account];
     }
 
-    function getBalance(address owner) external view returns (NFTInfo memory) {
-        return NFTInfo({
-            name: _name,
-            symbol: _symbol,
-            balance: balanceOf(owner)
-        });
-    }
-
-    function getAPRIncreasePerNFT() external view returns (uint) {
-        return _APRIncrement;
+    function depositOfNFT(address account) external view returns (uint[] memory) {
+        return userDepositNFTs[account];
     }
     
-    function getAPR() external view returns (uint) {
-        return _APR;
-    }
+
 }

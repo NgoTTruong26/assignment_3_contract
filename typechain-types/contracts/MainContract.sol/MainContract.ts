@@ -29,6 +29,7 @@ import type {
 
 export declare namespace MainContract {
   export type DepositStruct = {
+    APRIncrement: PromiseOrValue<BigNumberish>;
     amount: PromiseOrValue<BigNumberish>;
     accumulatedInterest: PromiseOrValue<BigNumberish>;
     depositTime: PromiseOrValue<BigNumberish>;
@@ -36,104 +37,166 @@ export declare namespace MainContract {
   };
 
   export type DepositStructOutput = [
+    number,
     BigNumber,
     BigNumber,
     BigNumber,
     BigNumber
   ] & {
+    APRIncrement: number;
     amount: BigNumber;
     accumulatedInterest: BigNumber;
     depositTime: BigNumber;
     lastInterestTime: BigNumber;
   };
 
-  export type NFTInfoStruct = {
-    name: PromiseOrValue<string>;
-    symbol: PromiseOrValue<string>;
-    balance: PromiseOrValue<BigNumberish>;
+  export type DepositTokenInfoStruct = {
+    user: PromiseOrValue<string>;
+    amount: PromiseOrValue<BigNumberish>;
   };
 
-  export type NFTInfoStructOutput = [string, string, BigNumber] & {
-    name: string;
-    symbol: string;
-    balance: BigNumber;
+  export type DepositTokenInfoStructOutput = [string, BigNumber] & {
+    user: string;
+    amount: BigNumber;
+  };
+
+  export type DepositNFTInfoStruct = {
+    user: PromiseOrValue<string>;
+    NFTId: PromiseOrValue<BigNumberish>;
+  };
+
+  export type DepositNFTInfoStructOutput = [string, BigNumber] & {
+    user: string;
+    NFTId: BigNumber;
+  };
+
+  export type WithdrawERC20InfoStruct = {
+    user: PromiseOrValue<string>;
+    amount: PromiseOrValue<BigNumberish>;
+  };
+
+  export type WithdrawERC20InfoStructOutput = [string, BigNumber] & {
+    user: string;
+    amount: BigNumber;
+  };
+
+  export type WithdrawNFTInfoStruct = {
+    user: PromiseOrValue<string>;
+    NFTId: PromiseOrValue<BigNumberish>;
+  };
+
+  export type WithdrawNFTInfoStructOutput = [string, BigNumber] & {
+    user: string;
+    NFTId: BigNumber;
+  };
+
+  export type ClaimRewardInfoStruct = {
+    user: PromiseOrValue<string>;
+    amount: PromiseOrValue<BigNumberish>;
+  };
+
+  export type ClaimRewardInfoStructOutput = [string, BigNumber] & {
+    user: string;
+    amount: BigNumber;
+  };
+
+  export type TransferERC20InfoStruct = {
+    from: PromiseOrValue<string>;
+    to: PromiseOrValue<string>;
+    amount: PromiseOrValue<BigNumberish>;
+  };
+
+  export type TransferERC20InfoStructOutput = [string, string, BigNumber] & {
+    from: string;
+    to: string;
+    amount: BigNumber;
+  };
+
+  export type TransferNFTInfoStruct = {
+    from: PromiseOrValue<string>;
+    to: PromiseOrValue<string>;
+    NFTId: PromiseOrValue<BigNumberish>;
+  };
+
+  export type TransferNFTInfoStructOutput = [string, string, BigNumber] & {
+    from: string;
+    to: string;
+    NFTId: BigNumber;
+  };
+
+  export type EventInfoStruct = {
+    depositToken: MainContract.DepositTokenInfoStruct;
+    depositNFT: MainContract.DepositNFTInfoStruct;
+    withdrawERC20: MainContract.WithdrawERC20InfoStruct;
+    withdrawNFT: MainContract.WithdrawNFTInfoStruct;
+    claimReward: MainContract.ClaimRewardInfoStruct;
+    transferERC20: MainContract.TransferERC20InfoStruct;
+    transferNFT: MainContract.TransferNFTInfoStruct;
+    successful: PromiseOrValue<boolean>;
+    timestamp: PromiseOrValue<BigNumberish>;
+  };
+
+  export type EventInfoStructOutput = [
+    MainContract.DepositTokenInfoStructOutput,
+    MainContract.DepositNFTInfoStructOutput,
+    MainContract.WithdrawERC20InfoStructOutput,
+    MainContract.WithdrawNFTInfoStructOutput,
+    MainContract.ClaimRewardInfoStructOutput,
+    MainContract.TransferERC20InfoStructOutput,
+    MainContract.TransferNFTInfoStructOutput,
+    boolean,
+    BigNumber
+  ] & {
+    depositToken: MainContract.DepositTokenInfoStructOutput;
+    depositNFT: MainContract.DepositNFTInfoStructOutput;
+    withdrawERC20: MainContract.WithdrawERC20InfoStructOutput;
+    withdrawNFT: MainContract.WithdrawNFTInfoStructOutput;
+    claimReward: MainContract.ClaimRewardInfoStructOutput;
+    transferERC20: MainContract.TransferERC20InfoStructOutput;
+    transferNFT: MainContract.TransferNFTInfoStructOutput;
+    successful: boolean;
+    timestamp: BigNumber;
   };
 }
 
 export interface MainContractInterface extends utils.Interface {
   functions: {
-    "_THRESHOLD()": FunctionFragment;
-    "approve(address,uint256)": FunctionFragment;
-    "balanceOf(address)": FunctionFragment;
     "claimReward()": FunctionFragment;
     "depositNFT(uint256)": FunctionFragment;
     "depositOf(address)": FunctionFragment;
+    "depositOfNFT(address)": FunctionFragment;
     "depositToken(uint256)": FunctionFragment;
     "getAPR()": FunctionFragment;
-    "getAPRIncreasePerNFT()": FunctionFragment;
-    "getApproved(uint256)": FunctionFragment;
-    "getBalance(address)": FunctionFragment;
-    "isApprovedForAll(address,address)": FunctionFragment;
-    "name()": FunctionFragment;
+    "getEventInfo(uint256)": FunctionFragment;
+    "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
-    "ownerOf(uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "safeTransferFrom(address,address,uint256)": FunctionFragment;
-    "safeTransferFrom(address,address,uint256,bytes)": FunctionFragment;
-    "setAPR(uint256)": FunctionFragment;
-    "setApprovalForAll(address,bool)": FunctionFragment;
-    "supportsInterface(bytes4)": FunctionFragment;
-    "symbol()": FunctionFragment;
-    "tokenURI(uint256)": FunctionFragment;
-    "transferFrom(address,address,uint256)": FunctionFragment;
+    "setAPR(uint8)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "updateInterest(address)": FunctionFragment;
     "withdraw(uint256)": FunctionFragment;
     "withdrawNFT(uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "_THRESHOLD"
-      | "approve"
-      | "balanceOf"
       | "claimReward"
       | "depositNFT"
       | "depositOf"
+      | "depositOfNFT"
       | "depositToken"
       | "getAPR"
-      | "getAPRIncreasePerNFT"
-      | "getApproved"
-      | "getBalance"
-      | "isApprovedForAll"
-      | "name"
+      | "getEventInfo"
+      | "onERC721Received"
       | "owner"
-      | "ownerOf"
       | "renounceOwnership"
-      | "safeTransferFrom(address,address,uint256)"
-      | "safeTransferFrom(address,address,uint256,bytes)"
       | "setAPR"
-      | "setApprovalForAll"
-      | "supportsInterface"
-      | "symbol"
-      | "tokenURI"
-      | "transferFrom"
       | "transferOwnership"
+      | "updateInterest"
       | "withdraw"
       | "withdrawNFT"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "_THRESHOLD",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "approve",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "balanceOf",
-    values: [PromiseOrValue<string>]
-  ): string;
   encodeFunctionData(
     functionFragment: "claimReward",
     values?: undefined
@@ -147,46 +210,20 @@ export interface MainContractInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "depositOfNFT",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "depositToken",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "getAPR", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "getAPRIncreasePerNFT",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getApproved",
+    functionFragment: "getEventInfo",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getBalance",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isApprovedForAll",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "ownerOf",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "safeTransferFrom(address,address,uint256)",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "safeTransferFrom(address,address,uint256,bytes)",
+    functionFragment: "onERC721Received",
     values: [
       PromiseOrValue<string>,
       PromiseOrValue<string>,
@@ -194,33 +231,21 @@ export interface MainContractInterface extends utils.Interface {
       PromiseOrValue<BytesLike>
     ]
   ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "setAPR",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setApprovalForAll",
-    values: [PromiseOrValue<string>, PromiseOrValue<boolean>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "supportsInterface",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "tokenURI",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferFrom",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
     functionFragment: "transferOwnership",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateInterest",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -232,9 +257,6 @@ export interface MainContractInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
 
-  decodeFunctionResult(functionFragment: "_THRESHOLD", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "claimReward",
     data: BytesLike
@@ -242,55 +264,34 @@ export interface MainContractInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "depositNFT", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "depositOf", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "depositOfNFT",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "depositToken",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getAPR", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getAPRIncreasePerNFT",
+    functionFragment: "getEventInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getApproved",
+    functionFragment: "onERC721Received",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getBalance", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "isApprovedForAll",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "safeTransferFrom(address,address,uint256)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "safeTransferFrom(address,address,uint256,bytes)",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "setAPR", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "setApprovalForAll",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "supportsInterface",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "transferFrom",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateInterest",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
@@ -300,92 +301,26 @@ export interface MainContractInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "Approval(address,address,uint256)": EventFragment;
-    "ApprovalForAll(address,address,bool)": EventFragment;
-    "Claimed(address,uint256)": EventFragment;
-    "Deposited(address,uint256)": EventFragment;
-    "NFTDeposited(address,uint256)": EventFragment;
-    "NFTWithdrew(address,uint256)": EventFragment;
+    "NFTReceived(address,address,uint256,bytes)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "Transfer(address,address,uint256)": EventFragment;
-    "Withdrew(address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Claimed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Deposited"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NFTDeposited"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NFTWithdrew"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NFTReceived"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Withdrew"): EventFragment;
 }
 
-export interface ApprovalEventObject {
-  owner: string;
-  approved: string;
-  tokenId: BigNumber;
-}
-export type ApprovalEvent = TypedEvent<
-  [string, string, BigNumber],
-  ApprovalEventObject
->;
-
-export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
-
-export interface ApprovalForAllEventObject {
-  owner: string;
+export interface NFTReceivedEventObject {
   operator: string;
-  approved: boolean;
+  from: string;
+  tokenId: BigNumber;
+  data: string;
 }
-export type ApprovalForAllEvent = TypedEvent<
-  [string, string, boolean],
-  ApprovalForAllEventObject
+export type NFTReceivedEvent = TypedEvent<
+  [string, string, BigNumber, string],
+  NFTReceivedEventObject
 >;
 
-export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
-
-export interface ClaimedEventObject {
-  user: string;
-  reward: BigNumber;
-}
-export type ClaimedEvent = TypedEvent<[string, BigNumber], ClaimedEventObject>;
-
-export type ClaimedEventFilter = TypedEventFilter<ClaimedEvent>;
-
-export interface DepositedEventObject {
-  user: string;
-  amount: BigNumber;
-}
-export type DepositedEvent = TypedEvent<
-  [string, BigNumber],
-  DepositedEventObject
->;
-
-export type DepositedEventFilter = TypedEventFilter<DepositedEvent>;
-
-export interface NFTDepositedEventObject {
-  user: string;
-  NFTId: BigNumber;
-}
-export type NFTDepositedEvent = TypedEvent<
-  [string, BigNumber],
-  NFTDepositedEventObject
->;
-
-export type NFTDepositedEventFilter = TypedEventFilter<NFTDepositedEvent>;
-
-export interface NFTWithdrewEventObject {
-  user: string;
-  NFTId: BigNumber;
-}
-export type NFTWithdrewEvent = TypedEvent<
-  [string, BigNumber],
-  NFTWithdrewEventObject
->;
-
-export type NFTWithdrewEventFilter = TypedEventFilter<NFTWithdrewEvent>;
+export type NFTReceivedEventFilter = TypedEventFilter<NFTReceivedEvent>;
 
 export interface OwnershipTransferredEventObject {
   previousOwner: string;
@@ -398,29 +333,6 @@ export type OwnershipTransferredEvent = TypedEvent<
 
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
-
-export interface TransferEventObject {
-  from: string;
-  to: string;
-  tokenId: BigNumber;
-}
-export type TransferEvent = TypedEvent<
-  [string, string, BigNumber],
-  TransferEventObject
->;
-
-export type TransferEventFilter = TypedEventFilter<TransferEvent>;
-
-export interface WithdrewEventObject {
-  user: string;
-  amount: BigNumber;
-}
-export type WithdrewEvent = TypedEvent<
-  [string, BigNumber],
-  WithdrewEventObject
->;
-
-export type WithdrewEventFilter = TypedEventFilter<WithdrewEvent>;
 
 export interface MainContract extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -449,19 +361,6 @@ export interface MainContract extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _THRESHOLD(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    approve(
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    balanceOf(
-      owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     claimReward(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -476,6 +375,11 @@ export interface MainContract extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[MainContract.DepositStructOutput]>;
 
+    depositOfNFT(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
     depositToken(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -483,49 +387,22 @@ export interface MainContract extends BaseContract {
 
     getAPR(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getAPRIncreasePerNFT(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    getApproved(
-      tokenId: PromiseOrValue<BigNumberish>,
+    getEventInfo(
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<[MainContract.EventInfoStructOutput]>;
 
-    getBalance(
-      owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[MainContract.NFTInfoStructOutput]>;
-
-    isApprovedForAll(
-      owner: PromiseOrValue<string>,
+    onERC721Received(
       operator: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    name(overrides?: CallOverrides): Promise<[string]>;
+      from: PromiseOrValue<string>,
+      tokenId: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
-    ownerOf(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     renounceOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "safeTransferFrom(address,address,uint256)"(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "safeTransferFrom(address,address,uint256,bytes)"(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      data: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -534,33 +411,13 @@ export interface MainContract extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setApprovalForAll(
-      operator: PromiseOrValue<string>,
-      approved: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    symbol(overrides?: CallOverrides): Promise<[string]>;
-
-    tokenURI(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    transferFrom(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    updateInterest(
+      user: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -574,19 +431,6 @@ export interface MainContract extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
-
-  _THRESHOLD(overrides?: CallOverrides): Promise<BigNumber>;
-
-  approve(
-    to: PromiseOrValue<string>,
-    tokenId: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  balanceOf(
-    owner: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   claimReward(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -602,6 +446,11 @@ export interface MainContract extends BaseContract {
     overrides?: CallOverrides
   ): Promise<MainContract.DepositStructOutput>;
 
+  depositOfNFT(
+    account: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
   depositToken(
     amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -609,49 +458,22 @@ export interface MainContract extends BaseContract {
 
   getAPR(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getAPRIncreasePerNFT(overrides?: CallOverrides): Promise<BigNumber>;
-
-  getApproved(
-    tokenId: PromiseOrValue<BigNumberish>,
+  getEventInfo(
+    index: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<string>;
+  ): Promise<MainContract.EventInfoStructOutput>;
 
-  getBalance(
-    owner: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<MainContract.NFTInfoStructOutput>;
-
-  isApprovedForAll(
-    owner: PromiseOrValue<string>,
+  onERC721Received(
     operator: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  name(overrides?: CallOverrides): Promise<string>;
+    from: PromiseOrValue<string>,
+    tokenId: PromiseOrValue<BigNumberish>,
+    data: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
-  ownerOf(
-    tokenId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   renounceOwnership(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "safeTransferFrom(address,address,uint256)"(
-    from: PromiseOrValue<string>,
-    to: PromiseOrValue<string>,
-    tokenId: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "safeTransferFrom(address,address,uint256,bytes)"(
-    from: PromiseOrValue<string>,
-    to: PromiseOrValue<string>,
-    tokenId: PromiseOrValue<BigNumberish>,
-    data: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -660,33 +482,13 @@ export interface MainContract extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setApprovalForAll(
-    operator: PromiseOrValue<string>,
-    approved: PromiseOrValue<boolean>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  supportsInterface(
-    interfaceId: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  symbol(overrides?: CallOverrides): Promise<string>;
-
-  tokenURI(
-    tokenId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  transferFrom(
-    from: PromiseOrValue<string>,
-    to: PromiseOrValue<string>,
-    tokenId: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   transferOwnership(
     newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  updateInterest(
+    user: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -701,19 +503,6 @@ export interface MainContract extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    _THRESHOLD(overrides?: CallOverrides): Promise<BigNumber>;
-
-    approve(
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    balanceOf(
-      owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     claimReward(overrides?: CallOverrides): Promise<void>;
 
     depositNFT(
@@ -726,6 +515,11 @@ export interface MainContract extends BaseContract {
       overrides?: CallOverrides
     ): Promise<MainContract.DepositStructOutput>;
 
+    depositOfNFT(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
     depositToken(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -733,82 +527,35 @@ export interface MainContract extends BaseContract {
 
     getAPR(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getAPRIncreasePerNFT(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getApproved(
-      tokenId: PromiseOrValue<BigNumberish>,
+    getEventInfo(
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<MainContract.EventInfoStructOutput>;
 
-    getBalance(
-      owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<MainContract.NFTInfoStructOutput>;
-
-    isApprovedForAll(
-      owner: PromiseOrValue<string>,
+    onERC721Received(
       operator: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    name(overrides?: CallOverrides): Promise<string>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    ownerOf(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
-
-    "safeTransferFrom(address,address,uint256)"(
       from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "safeTransferFrom(address,address,uint256,bytes)"(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
       data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<string>;
+
+    owner(overrides?: CallOverrides): Promise<string>;
+
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     setAPR(
       APR: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setApprovalForAll(
-      operator: PromiseOrValue<string>,
-      approved: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    symbol(overrides?: CallOverrides): Promise<string>;
-
-    tokenURI(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    transferFrom(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateInterest(
+      user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -824,63 +571,18 @@ export interface MainContract extends BaseContract {
   };
 
   filters: {
-    "Approval(address,address,uint256)"(
-      owner?: PromiseOrValue<string> | null,
-      approved?: PromiseOrValue<string> | null,
-      tokenId?: PromiseOrValue<BigNumberish> | null
-    ): ApprovalEventFilter;
-    Approval(
-      owner?: PromiseOrValue<string> | null,
-      approved?: PromiseOrValue<string> | null,
-      tokenId?: PromiseOrValue<BigNumberish> | null
-    ): ApprovalEventFilter;
-
-    "ApprovalForAll(address,address,bool)"(
-      owner?: PromiseOrValue<string> | null,
-      operator?: PromiseOrValue<string> | null,
-      approved?: null
-    ): ApprovalForAllEventFilter;
-    ApprovalForAll(
-      owner?: PromiseOrValue<string> | null,
-      operator?: PromiseOrValue<string> | null,
-      approved?: null
-    ): ApprovalForAllEventFilter;
-
-    "Claimed(address,uint256)"(
-      user?: PromiseOrValue<string> | null,
-      reward?: null
-    ): ClaimedEventFilter;
-    Claimed(
-      user?: PromiseOrValue<string> | null,
-      reward?: null
-    ): ClaimedEventFilter;
-
-    "Deposited(address,uint256)"(
-      user?: PromiseOrValue<string> | null,
-      amount?: null
-    ): DepositedEventFilter;
-    Deposited(
-      user?: PromiseOrValue<string> | null,
-      amount?: null
-    ): DepositedEventFilter;
-
-    "NFTDeposited(address,uint256)"(
-      user?: PromiseOrValue<string> | null,
-      NFTId?: PromiseOrValue<BigNumberish> | null
-    ): NFTDepositedEventFilter;
-    NFTDeposited(
-      user?: PromiseOrValue<string> | null,
-      NFTId?: PromiseOrValue<BigNumberish> | null
-    ): NFTDepositedEventFilter;
-
-    "NFTWithdrew(address,uint256)"(
-      user?: PromiseOrValue<string> | null,
-      NFTId?: PromiseOrValue<BigNumberish> | null
-    ): NFTWithdrewEventFilter;
-    NFTWithdrew(
-      user?: PromiseOrValue<string> | null,
-      NFTId?: PromiseOrValue<BigNumberish> | null
-    ): NFTWithdrewEventFilter;
+    "NFTReceived(address,address,uint256,bytes)"(
+      operator?: null,
+      from?: null,
+      tokenId?: null,
+      data?: null
+    ): NFTReceivedEventFilter;
+    NFTReceived(
+      operator?: null,
+      from?: null,
+      tokenId?: null,
+      data?: null
+    ): NFTReceivedEventFilter;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: PromiseOrValue<string> | null,
@@ -890,42 +592,9 @@ export interface MainContract extends BaseContract {
       previousOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
-
-    "Transfer(address,address,uint256)"(
-      from?: PromiseOrValue<string> | null,
-      to?: PromiseOrValue<string> | null,
-      tokenId?: PromiseOrValue<BigNumberish> | null
-    ): TransferEventFilter;
-    Transfer(
-      from?: PromiseOrValue<string> | null,
-      to?: PromiseOrValue<string> | null,
-      tokenId?: PromiseOrValue<BigNumberish> | null
-    ): TransferEventFilter;
-
-    "Withdrew(address,uint256)"(
-      user?: PromiseOrValue<string> | null,
-      amount?: null
-    ): WithdrewEventFilter;
-    Withdrew(
-      user?: PromiseOrValue<string> | null,
-      amount?: null
-    ): WithdrewEventFilter;
   };
 
   estimateGas: {
-    _THRESHOLD(overrides?: CallOverrides): Promise<BigNumber>;
-
-    approve(
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    balanceOf(
-      owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     claimReward(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -940,6 +609,11 @@ export interface MainContract extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    depositOfNFT(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     depositToken(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -947,49 +621,22 @@ export interface MainContract extends BaseContract {
 
     getAPR(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getAPRIncreasePerNFT(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getApproved(
-      tokenId: PromiseOrValue<BigNumberish>,
+    getEventInfo(
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getBalance(
-      owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    isApprovedForAll(
-      owner: PromiseOrValue<string>,
+    onERC721Received(
       operator: PromiseOrValue<string>,
-      overrides?: CallOverrides
+      from: PromiseOrValue<string>,
+      tokenId: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    name(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    ownerOf(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     renounceOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "safeTransferFrom(address,address,uint256)"(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "safeTransferFrom(address,address,uint256,bytes)"(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      data: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -998,33 +645,13 @@ export interface MainContract extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setApprovalForAll(
-      operator: PromiseOrValue<string>,
-      approved: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    symbol(overrides?: CallOverrides): Promise<BigNumber>;
-
-    tokenURI(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    transferFrom(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    updateInterest(
+      user: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1040,19 +667,6 @@ export interface MainContract extends BaseContract {
   };
 
   populateTransaction: {
-    _THRESHOLD(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    approve(
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    balanceOf(
-      owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     claimReward(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -1067,6 +681,11 @@ export interface MainContract extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    depositOfNFT(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     depositToken(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1074,51 +693,22 @@ export interface MainContract extends BaseContract {
 
     getAPR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getAPRIncreasePerNFT(
+    getEventInfo(
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getApproved(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getBalance(
-      owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isApprovedForAll(
-      owner: PromiseOrValue<string>,
+    onERC721Received(
       operator: PromiseOrValue<string>,
-      overrides?: CallOverrides
+      from: PromiseOrValue<string>,
+      tokenId: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    ownerOf(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     renounceOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "safeTransferFrom(address,address,uint256)"(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "safeTransferFrom(address,address,uint256,bytes)"(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      data: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1127,33 +717,13 @@ export interface MainContract extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    setApprovalForAll(
-      operator: PromiseOrValue<string>,
-      approved: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    tokenURI(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    transferFrom(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateInterest(
+      user: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

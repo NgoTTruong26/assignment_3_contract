@@ -6,3 +6,4 @@ export type { mainContractSol };
 import type * as myContractSol from "./MyContract.sol";
 export type { myContractSol };
 export type { TokenERC20 } from "./TokenERC20";
+export type { TokenERC721 } from "./TokenERC721";

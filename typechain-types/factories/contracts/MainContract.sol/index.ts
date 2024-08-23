@@ -2,4 +2,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export { ITokenERC20__factory } from "./ITokenERC20__factory";
+export { ITokenERC721__factory } from "./ITokenERC721__factory";
 export { MainContract__factory } from "./MainContract__factory";
