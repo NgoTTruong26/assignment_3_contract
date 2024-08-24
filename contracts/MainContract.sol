@@ -266,6 +266,45 @@ contract MainContract is Ownable, IERC721Receiver {
        
     }
 
+    function transferERC20(address to, uint amount) external {
+        updateInterest(msg.sender);
+
+        require(amount > 0, "Amount must be greater than 0");
+
+        
+        EventInfo storage eventInfo = eventsInfo[_EventCounter];
+
+        try _tokenErc20.transferFrom(msg.sender, to, amount) {
+            eventInfo.transferERC20 = TransferERC20Info(msg.sender, to, amount);
+            eventInfo.successful = true;
+            eventInfo.timestamp = block.timestamp;
+            _EventCounter += 1;
+        } catch  {
+            eventInfo.transferERC20 = TransferERC20Info(msg.sender, to, amount);
+            eventInfo.successful = false;
+            eventInfo.timestamp = block.timestamp;
+            _EventCounter += 1;
+        }
+    }
+
+    function transferNFT(address to, uint NFTId) external {
+        updateInterest(msg.sender);
+
+        EventInfo storage eventInfo = eventsInfo[_EventCounter];
+
+        try _tokenErc721.safeTransferFrom(msg.sender, to, NFTId) {
+            eventInfo.transferNFT = TransferNFTInfo(msg.sender, to, NFTId);
+            eventInfo.successful = true;
+            eventInfo.timestamp = block.timestamp;
+            _EventCounter += 1;
+        } catch  {
+            eventInfo.transferNFT = TransferNFTInfo(msg.sender, to, NFTId);
+            eventInfo.successful = false;
+            eventInfo.timestamp = block.timestamp;
+            _EventCounter += 1;
+        }
+    }
+
     function setAPR(uint8 APR) external onlyOwner() {
         _APR = APR;
     }
