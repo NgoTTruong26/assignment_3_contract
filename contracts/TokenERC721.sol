@@ -11,8 +11,8 @@ contract TokenERC721 is ERC721, Ownable {
     constructor(string memory name, string memory symbol) ERC721(name, symbol) {}
 
     function mint(address to) public {
-        _NFTIdCounter += 1;
         _safeMint(to, _NFTIdCounter);
+        _NFTIdCounter += 1;
     }
 
 }

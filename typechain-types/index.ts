@@ -32,8 +32,6 @@ export type { ITokenERC721 } from "./contracts/MainContract.sol/ITokenERC721";
 export { ITokenERC721__factory } from "./factories/contracts/MainContract.sol/ITokenERC721__factory";
 export type { MainContract } from "./contracts/MainContract.sol/MainContract";
 export { MainContract__factory } from "./factories/contracts/MainContract.sol/MainContract__factory";
-export type { MyContract } from "./contracts/MyContract.sol/MyContract";
-export { MyContract__factory } from "./factories/contracts/MyContract.sol/MyContract__factory";
 export type { TokenERC20 } from "./contracts/TokenERC20";
 export { TokenERC20__factory } from "./factories/contracts/TokenERC20__factory";
 export type { TokenERC721 } from "./contracts/TokenERC721";

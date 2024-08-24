@@ -266,20 +266,18 @@ describe('Token contract', function () {
         mainContract.connect(otherUser[0]).withdraw(0),
       ).to.be.revertedWith('Tokens are still locked');
     }); */
-    /* it('Should withdraw then deposit amount = 2000 after 2th deposit ', async function () {
-      const depositAmount = ethers.utils.parseUnits('1500', 18);
-      const allowanceAmount = ethers.utils.parseUnits('1500', 18);
-      const withdrawAmount = ethers.utils.parseUnits('500', 18);
+    it('Should withdraw then deposit amount = 2000 after 2th deposit ', async function () {
+      const depositAmount = ethers.utils.parseUnits('1000', 18);
+      const allowanceAmount = ethers.utils.parseUnits('1000', 18);
+      const withdrawAmount = ethers.utils.parseUnits('100000', 18);
 
-      const { mainContract, deployer, tokenERC20, otherUser } =
+      const { mainContract, deployer, tokenERC20, otherUser, tokenERC721 } =
         await loadFixture(deployTokenFixture);
-
-      await mainContract.updateInterest(otherUser[0].address);
 
       console.log('user 1', otherUser[0].address);
       await tokenERC20.mint(
         otherUser[0].address,
-        ethers.utils.parseUnits('3000', 18),
+        ethers.utils.parseUnits('1000000', 18),
       );
 
       await tokenERC20
@@ -290,9 +288,85 @@ describe('Token contract', function () {
       const balanceBefore = await tokenERC20.balanceOf(otherUser[0].address);
       console.log('balance Before withdraw', balanceBefore);
 
-      await sleep(5000);
+      const depositOf1 = await mainContract.depositOf(otherUser[0].address);
+      console.log('depositOf1', depositOf1);
+
+      await sleep(3000);
+
+      await tokenERC20
+        .connect(otherUser[0])
+        .approve(mainContract.address, allowanceAmount);
+      await mainContract.connect(otherUser[0]).depositToken(depositAmount);
+
+      const depositOf2 = await mainContract.depositOf(otherUser[0].address);
+      console.log('depositOf2', depositOf2);
+
+      await sleep(3000);
+
+      await tokenERC20
+        .connect(otherUser[0])
+        .approve(mainContract.address, ethers.utils.parseUnits('998000', 18));
+      await mainContract
+        .connect(otherUser[0])
+        .depositToken(ethers.utils.parseUnits('998000', 18));
+
+      const depositOf3 = await mainContract.depositOf(otherUser[0].address);
+      console.log('depositOf3', depositOf3);
+
+      await tokenERC721.connect(otherUser[0]).approve(mainContract.address, 0);
+      await mainContract.connect(otherUser[0]).depositNFT(0);
+
+      const depositOf4 = await mainContract.depositOf(otherUser[0].address);
+      console.log('depositOf4', depositOf4);
+
+      await sleep(3000);
 
       await mainContract.connect(otherUser[0]).withdraw(withdrawAmount);
+
+      const depositOf5 = await mainContract.depositOf(otherUser[0].address);
+      console.log('depositOf5', depositOf5);
+
+      await sleep(3000);
+
+      await mainContract.connect(otherUser[0]).withdrawNFT(0);
+
+      const depositOf6 = await mainContract.depositOf(otherUser[0].address);
+      console.log('depositOf6', depositOf6);
+
+      await sleep(3000);
+
+      await mainContract.connect(otherUser[0]).withdraw(withdrawAmount);
+
+      const depositOf7 = await mainContract.depositOf(otherUser[0].address);
+      console.log('depositOf7', depositOf7);
+
+      await sleep(3000);
+
+      const balanceBeforeClaimReward = await tokenERC20.balanceOf(
+        otherUser[0].address,
+      );
+      console.log('balanceBeforeClaimReward', balanceBeforeClaimReward);
+
+      await mainContract.connect(otherUser[0]).claimReward();
+
+      const depositOf8 = await mainContract.depositOf(otherUser[0].address);
+      console.log('depositOf8', depositOf8);
+
+      const balanceAfterClaimReward = await tokenERC20.balanceOf(
+        otherUser[0].address,
+      );
+
+      console.log('balanceAfterClaimReward', balanceAfterClaimReward);
+
+      await sleep(3000);
+
+      await tokenERC20.connect(otherUser[0]).approve(mainContract.address, '1');
+      await mainContract.connect(otherUser[0]).depositToken('1');
+
+      const depositOf9 = await mainContract.depositOf(otherUser[0].address);
+      console.log('depositOf9', depositOf9);
+
+      /* await mainContract.connect(otherUser[0]).withdraw(withdrawAmount);
 
       const balance = await tokenERC20.balanceOf(otherUser[0].address);
       console.log('balance after withdraw', balance);
@@ -311,8 +385,8 @@ describe('Token contract', function () {
 
       const depositOf = await mainContract.depositOf(otherUser[0].address);
 
-      expect(depositOf.amount).to.equal(ethers.utils.parseUnits('2000', 18));
-    }); */
+      expect(depositOf.amount).to.equal(ethers.utils.parseUnits('2000', 18)); */
+    });
     /* it('Should accumulatedInterest = 60000 with (% seconds)(optional NFT) ', async function () {
       const depositAmount = ethers.utils.parseUnits('900000', 18);
       const allowanceAmount = ethers.utils.parseUnits('900000', 18);
