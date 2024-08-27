@@ -154,7 +154,7 @@ contract MainContract is Ownable, IERC721Receiver {
             
         } catch  {
             eventInfo.depositToken = DepositTokenInfo(msg.sender, amount);
-            eventInfo.successful = true;
+            eventInfo.successful = false;
             eventInfo.timestamp = block.timestamp;
             _EventCounter += 1;
         }
