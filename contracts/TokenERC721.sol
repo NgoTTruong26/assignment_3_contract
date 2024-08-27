@@ -8,11 +8,25 @@ contract TokenERC721 is ERC721, Ownable {
 
     uint private _NFTIdCounter;
 
+    struct NFTInfo {
+        string name;
+        string symbol;
+        uint256 balance;
+    }
+
     constructor(string memory name, string memory symbol) ERC721(name, symbol) {}
 
     function mint(address to) public {
         _safeMint(to, _NFTIdCounter);
         _NFTIdCounter += 1;
+    }
+
+    function getBalanceNFT(address owner) external view returns (NFTInfo memory) {
+        return NFTInfo({
+            name: name(),
+            symbol: symbol(),
+            balance: balanceOf(owner)
+        });
     }
 
 }

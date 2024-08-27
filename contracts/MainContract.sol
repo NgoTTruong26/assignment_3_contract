@@ -112,14 +112,14 @@ contract MainContract is Ownable, IERC721Receiver {
         if (userDeposit.amount > 0) {
             uint timeSinceLastInterest = block.timestamp - userDeposit.lastInterestTime;
 
-            if (timeSinceLastInterest >= 1 days) {
-                uint daysElapsed = timeSinceLastInterest / 1 days;
+            if (timeSinceLastInterest >= 1 minutes) {
+                uint daysElapsed = timeSinceLastInterest / 1 minutes;
 
-                uint dailyInterest = (userDeposit.amount * (_APR + userDeposit.APRIncrement) / 100) * daysElapsed / 365;
+                uint dailyInterest = (userDeposit.amount * (_APR + userDeposit.APRIncrement) / 100) * daysElapsed / 5;
 
                 userDeposit.accumulatedInterest += dailyInterest;
 
-                userDeposit.lastInterestTime += daysElapsed * 1 days;
+                userDeposit.lastInterestTime += daysElapsed * 1 minutes;
             }
         }
     }
@@ -128,6 +128,8 @@ contract MainContract is Ownable, IERC721Receiver {
         updateInterest(msg.sender);
 
         require(amount > 0, "Amount must be greater than 0");
+        require(_tokenErc20.allowance(msg.sender, address(this)) >= amount, "Insufficient allowance");
+
 
         
         EventInfo storage eventInfo = eventsInfo[_EventCounter];
@@ -189,6 +191,7 @@ contract MainContract is Ownable, IERC721Receiver {
         Deposit storage userDeposit = userDeposits[msg.sender];
         require(block.timestamp >= userDeposit.depositTime + _LOCK_TIME, "Tokens are still locked");
         require(amount > 0, "Amount must be greater than 0");
+        require(userDeposits[msg.sender].amount >= amount, "Amount must be greater than 0");
 
         
         EventInfo storage eventInfo = eventsInfo[_EventCounter];

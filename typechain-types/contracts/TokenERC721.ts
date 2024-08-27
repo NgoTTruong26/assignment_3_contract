@@ -27,11 +27,26 @@ import type {
   PromiseOrValue,
 } from "../common";
 
+export declare namespace TokenERC721 {
+  export type NFTInfoStruct = {
+    name: PromiseOrValue<string>;
+    symbol: PromiseOrValue<string>;
+    balance: PromiseOrValue<BigNumberish>;
+  };
+
+  export type NFTInfoStructOutput = [string, string, BigNumber] & {
+    name: string;
+    symbol: string;
+    balance: BigNumber;
+  };
+}
+
 export interface TokenERC721Interface extends utils.Interface {
   functions: {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
+    "getBalanceNFT(address)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "mint(address)": FunctionFragment;
     "name()": FunctionFragment;
@@ -53,6 +68,7 @@ export interface TokenERC721Interface extends utils.Interface {
       | "approve"
       | "balanceOf"
       | "getApproved"
+      | "getBalanceNFT"
       | "isApprovedForAll"
       | "mint"
       | "name"
@@ -80,6 +96,10 @@ export interface TokenERC721Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getApproved",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBalanceNFT",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
@@ -146,6 +166,10 @@ export interface TokenERC721Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getApproved",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBalanceNFT",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -291,6 +315,11 @@ export interface TokenERC721 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    getBalanceNFT(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[TokenERC721.NFTInfoStructOutput]>;
+
     isApprovedForAll(
       owner: PromiseOrValue<string>,
       operator: PromiseOrValue<string>,
@@ -377,6 +406,11 @@ export interface TokenERC721 extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  getBalanceNFT(
+    owner: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<TokenERC721.NFTInfoStructOutput>;
+
   isApprovedForAll(
     owner: PromiseOrValue<string>,
     operator: PromiseOrValue<string>,
@@ -462,6 +496,11 @@ export interface TokenERC721 extends BaseContract {
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    getBalanceNFT(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<TokenERC721.NFTInfoStructOutput>;
 
     isApprovedForAll(
       owner: PromiseOrValue<string>,
@@ -589,6 +628,11 @@ export interface TokenERC721 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getBalanceNFT(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     isApprovedForAll(
       owner: PromiseOrValue<string>,
       operator: PromiseOrValue<string>,
@@ -673,6 +717,11 @@ export interface TokenERC721 extends BaseContract {
 
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getBalanceNFT(
+      owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
