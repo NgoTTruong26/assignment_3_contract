@@ -47,8 +47,9 @@ export interface TokenERC721Interface extends utils.Interface {
     "balanceOf(address)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getBalanceNFT(address)": FunctionFragment;
+    "getOwnedTokens(address)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "mint(address)": FunctionFragment;
+    "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "owner()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
@@ -69,6 +70,7 @@ export interface TokenERC721Interface extends utils.Interface {
       | "balanceOf"
       | "getApproved"
       | "getBalanceNFT"
+      | "getOwnedTokens"
       | "isApprovedForAll"
       | "mint"
       | "name"
@@ -102,12 +104,16 @@ export interface TokenERC721Interface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getOwnedTokens",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "mint",
-    values: [PromiseOrValue<string>]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -170,6 +176,10 @@ export interface TokenERC721Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getBalanceNFT",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getOwnedTokens",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -320,6 +330,11 @@ export interface TokenERC721 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[TokenERC721.NFTInfoStructOutput]>;
 
+    getOwnedTokens(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
     isApprovedForAll(
       owner: PromiseOrValue<string>,
       operator: PromiseOrValue<string>,
@@ -328,6 +343,7 @@ export interface TokenERC721 extends BaseContract {
 
     mint(
       to: PromiseOrValue<string>,
+      NFTId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -347,7 +363,7 @@ export interface TokenERC721 extends BaseContract {
     "safeTransferFrom(address,address,uint256)"(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
+      NFTId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -411,6 +427,11 @@ export interface TokenERC721 extends BaseContract {
     overrides?: CallOverrides
   ): Promise<TokenERC721.NFTInfoStructOutput>;
 
+  getOwnedTokens(
+    owner: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
   isApprovedForAll(
     owner: PromiseOrValue<string>,
     operator: PromiseOrValue<string>,
@@ -419,6 +440,7 @@ export interface TokenERC721 extends BaseContract {
 
   mint(
     to: PromiseOrValue<string>,
+    NFTId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -438,7 +460,7 @@ export interface TokenERC721 extends BaseContract {
   "safeTransferFrom(address,address,uint256)"(
     from: PromiseOrValue<string>,
     to: PromiseOrValue<string>,
-    tokenId: PromiseOrValue<BigNumberish>,
+    NFTId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -502,13 +524,22 @@ export interface TokenERC721 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<TokenERC721.NFTInfoStructOutput>;
 
+    getOwnedTokens(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
     isApprovedForAll(
       owner: PromiseOrValue<string>,
       operator: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    mint(to: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
+    mint(
+      to: PromiseOrValue<string>,
+      NFTId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -524,7 +555,7 @@ export interface TokenERC721 extends BaseContract {
     "safeTransferFrom(address,address,uint256)"(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
+      NFTId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -633,6 +664,11 @@ export interface TokenERC721 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getOwnedTokens(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     isApprovedForAll(
       owner: PromiseOrValue<string>,
       operator: PromiseOrValue<string>,
@@ -641,6 +677,7 @@ export interface TokenERC721 extends BaseContract {
 
     mint(
       to: PromiseOrValue<string>,
+      NFTId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -660,7 +697,7 @@ export interface TokenERC721 extends BaseContract {
     "safeTransferFrom(address,address,uint256)"(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
+      NFTId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -725,6 +762,11 @@ export interface TokenERC721 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getOwnedTokens(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     isApprovedForAll(
       owner: PromiseOrValue<string>,
       operator: PromiseOrValue<string>,
@@ -733,6 +775,7 @@ export interface TokenERC721 extends BaseContract {
 
     mint(
       to: PromiseOrValue<string>,
+      NFTId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -752,7 +795,7 @@ export interface TokenERC721 extends BaseContract {
     "safeTransferFrom(address,address,uint256)"(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
+      NFTId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

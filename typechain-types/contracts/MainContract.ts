@@ -25,7 +25,7 @@ import type {
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from "../../common";
+} from "../common";
 
 export declare namespace MainContract {
   export type DepositStruct = {
@@ -36,6 +36,7 @@ export declare namespace MainContract {
     depositTime: PromiseOrValue<BigNumberish>;
     depositNFTTime: PromiseOrValue<BigNumberish>;
     lockTime: PromiseOrValue<BigNumberish>;
+    isReceivedNFT: PromiseOrValue<boolean>;
   };
 
   export type DepositStructOutput = [
@@ -45,7 +46,8 @@ export declare namespace MainContract {
     BigNumber,
     BigNumber,
     BigNumber,
-    BigNumber
+    BigNumber,
+    boolean
   ] & {
     APRIncrement: number;
     amount: BigNumber;
@@ -54,137 +56,29 @@ export declare namespace MainContract {
     depositTime: BigNumber;
     depositNFTTime: BigNumber;
     lockTime: BigNumber;
-  };
-
-  export type DepositTokenInfoStruct = {
-    user: PromiseOrValue<string>;
-    amount: PromiseOrValue<BigNumberish>;
-  };
-
-  export type DepositTokenInfoStructOutput = [string, BigNumber] & {
-    user: string;
-    amount: BigNumber;
-  };
-
-  export type DepositNFTInfoStruct = {
-    user: PromiseOrValue<string>;
-    NFTId: PromiseOrValue<BigNumberish>;
-  };
-
-  export type DepositNFTInfoStructOutput = [string, BigNumber] & {
-    user: string;
-    NFTId: BigNumber;
-  };
-
-  export type WithdrawERC20InfoStruct = {
-    user: PromiseOrValue<string>;
-    amount: PromiseOrValue<BigNumberish>;
-  };
-
-  export type WithdrawERC20InfoStructOutput = [string, BigNumber] & {
-    user: string;
-    amount: BigNumber;
-  };
-
-  export type WithdrawNFTInfoStruct = {
-    user: PromiseOrValue<string>;
-    NFTId: PromiseOrValue<BigNumberish>;
-  };
-
-  export type WithdrawNFTInfoStructOutput = [string, BigNumber] & {
-    user: string;
-    NFTId: BigNumber;
-  };
-
-  export type ClaimRewardInfoStruct = {
-    user: PromiseOrValue<string>;
-    amount: PromiseOrValue<BigNumberish>;
-  };
-
-  export type ClaimRewardInfoStructOutput = [string, BigNumber] & {
-    user: string;
-    amount: BigNumber;
-  };
-
-  export type TransferERC20InfoStruct = {
-    from: PromiseOrValue<string>;
-    to: PromiseOrValue<string>;
-    amount: PromiseOrValue<BigNumberish>;
-  };
-
-  export type TransferERC20InfoStructOutput = [string, string, BigNumber] & {
-    from: string;
-    to: string;
-    amount: BigNumber;
-  };
-
-  export type TransferNFTInfoStruct = {
-    from: PromiseOrValue<string>;
-    to: PromiseOrValue<string>;
-    NFTId: PromiseOrValue<BigNumberish>;
-  };
-
-  export type TransferNFTInfoStructOutput = [string, string, BigNumber] & {
-    from: string;
-    to: string;
-    NFTId: BigNumber;
-  };
-
-  export type EventInfoStruct = {
-    depositToken: MainContract.DepositTokenInfoStruct;
-    depositNFT: MainContract.DepositNFTInfoStruct;
-    withdrawERC20: MainContract.WithdrawERC20InfoStruct;
-    withdrawNFT: MainContract.WithdrawNFTInfoStruct;
-    claimReward: MainContract.ClaimRewardInfoStruct;
-    transferERC20: MainContract.TransferERC20InfoStruct;
-    transferNFT: MainContract.TransferNFTInfoStruct;
-    successful: PromiseOrValue<boolean>;
-    timestamp: PromiseOrValue<BigNumberish>;
-  };
-
-  export type EventInfoStructOutput = [
-    MainContract.DepositTokenInfoStructOutput,
-    MainContract.DepositNFTInfoStructOutput,
-    MainContract.WithdrawERC20InfoStructOutput,
-    MainContract.WithdrawNFTInfoStructOutput,
-    MainContract.ClaimRewardInfoStructOutput,
-    MainContract.TransferERC20InfoStructOutput,
-    MainContract.TransferNFTInfoStructOutput,
-    boolean,
-    BigNumber
-  ] & {
-    depositToken: MainContract.DepositTokenInfoStructOutput;
-    depositNFT: MainContract.DepositNFTInfoStructOutput;
-    withdrawERC20: MainContract.WithdrawERC20InfoStructOutput;
-    withdrawNFT: MainContract.WithdrawNFTInfoStructOutput;
-    claimReward: MainContract.ClaimRewardInfoStructOutput;
-    transferERC20: MainContract.TransferERC20InfoStructOutput;
-    transferNFT: MainContract.TransferNFTInfoStructOutput;
-    successful: boolean;
-    timestamp: BigNumber;
+    isReceivedNFT: boolean;
   };
 }
 
 export interface MainContractInterface extends utils.Interface {
   functions: {
     "claimReward()": FunctionFragment;
+    "deployer()": FunctionFragment;
     "depositNFT(uint256[])": FunctionFragment;
     "depositOf(address)": FunctionFragment;
     "depositOfNFT(address)": FunctionFragment;
     "depositToken(uint256)": FunctionFragment;
-    "faucet(uint256)": FunctionFragment;
     "getAPR()": FunctionFragment;
-    "getContractBalance()": FunctionFragment;
+    "getAccumulatedInterest(address)": FunctionFragment;
     "getCurrentTime()": FunctionFragment;
-    "getEventInfo(uint256)": FunctionFragment;
-    "getFaucetBalance(address)": FunctionFragment;
+    "getDeployer()": FunctionFragment;
     "getInterest(address)": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setAPR(uint8)": FunctionFragment;
     "transferERC20(address,uint256)": FunctionFragment;
-    "transferNFT(address,uint256)": FunctionFragment;
+    "transferNFT(address,uint256[])": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "updateInterest(address)": FunctionFragment;
     "withdraw(uint256)": FunctionFragment;
@@ -194,16 +88,15 @@ export interface MainContractInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "claimReward"
+      | "deployer"
       | "depositNFT"
       | "depositOf"
       | "depositOfNFT"
       | "depositToken"
-      | "faucet"
       | "getAPR"
-      | "getContractBalance"
+      | "getAccumulatedInterest"
       | "getCurrentTime"
-      | "getEventInfo"
-      | "getFaucetBalance"
+      | "getDeployer"
       | "getInterest"
       | "onERC721Received"
       | "owner"
@@ -221,6 +114,7 @@ export interface MainContractInterface extends utils.Interface {
     functionFragment: "claimReward",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "depositNFT",
     values: [PromiseOrValue<BigNumberish>[]]
@@ -237,26 +131,18 @@ export interface MainContractInterface extends utils.Interface {
     functionFragment: "depositToken",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(
-    functionFragment: "faucet",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(functionFragment: "getAPR", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "getContractBalance",
-    values?: undefined
+    functionFragment: "getAccumulatedInterest",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getCurrentTime",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getEventInfo",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getFaucetBalance",
-    values: [PromiseOrValue<string>]
+    functionFragment: "getDeployer",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getInterest",
@@ -286,7 +172,7 @@ export interface MainContractInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "transferNFT",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -309,6 +195,7 @@ export interface MainContractInterface extends utils.Interface {
     functionFragment: "claimReward",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "depositNFT", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "depositOf", data: BytesLike): Result;
   decodeFunctionResult(
@@ -319,10 +206,9 @@ export interface MainContractInterface extends utils.Interface {
     functionFragment: "depositToken",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "faucet", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getAPR", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getContractBalance",
+    functionFragment: "getAccumulatedInterest",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -330,11 +216,7 @@ export interface MainContractInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getEventInfo",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getFaucetBalance",
+    functionFragment: "getDeployer",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -374,13 +256,93 @@ export interface MainContractInterface extends utils.Interface {
   ): Result;
 
   events: {
+    "ClaimReward(address,address,uint256)": EventFragment;
+    "DepositNFT(address,address,uint256)": EventFragment;
+    "DepositToken(address,address,uint256)": EventFragment;
+    "FaucetERC20(address,address,uint256)": EventFragment;
+    "MintNFT(address,address,uint256)": EventFragment;
     "NFTReceived(address,address,uint256,bytes)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "SetAPR(address,uint8)": EventFragment;
+    "TransferERC20(address,address,uint256)": EventFragment;
+    "TransferNFT(address,address,uint256)": EventFragment;
+    "WithdrawERC20(address,address,uint256)": EventFragment;
+    "WithdrawNFT(address,address,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "ClaimReward"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DepositNFT"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DepositToken"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FaucetERC20"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MintNFT"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NFTReceived"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetAPR"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransferERC20"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransferNFT"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "WithdrawERC20"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "WithdrawNFT"): EventFragment;
 }
+
+export interface ClaimRewardEventObject {
+  from: string;
+  to: string;
+  amount: BigNumber;
+}
+export type ClaimRewardEvent = TypedEvent<
+  [string, string, BigNumber],
+  ClaimRewardEventObject
+>;
+
+export type ClaimRewardEventFilter = TypedEventFilter<ClaimRewardEvent>;
+
+export interface DepositNFTEventObject {
+  from: string;
+  to: string;
+  NFTId: BigNumber;
+}
+export type DepositNFTEvent = TypedEvent<
+  [string, string, BigNumber],
+  DepositNFTEventObject
+>;
+
+export type DepositNFTEventFilter = TypedEventFilter<DepositNFTEvent>;
+
+export interface DepositTokenEventObject {
+  from: string;
+  to: string;
+  amount: BigNumber;
+}
+export type DepositTokenEvent = TypedEvent<
+  [string, string, BigNumber],
+  DepositTokenEventObject
+>;
+
+export type DepositTokenEventFilter = TypedEventFilter<DepositTokenEvent>;
+
+export interface FaucetERC20EventObject {
+  from: string;
+  to: string;
+  amount: BigNumber;
+}
+export type FaucetERC20Event = TypedEvent<
+  [string, string, BigNumber],
+  FaucetERC20EventObject
+>;
+
+export type FaucetERC20EventFilter = TypedEventFilter<FaucetERC20Event>;
+
+export interface MintNFTEventObject {
+  from: string;
+  to: string;
+  NFTId: BigNumber;
+}
+export type MintNFTEvent = TypedEvent<
+  [string, string, BigNumber],
+  MintNFTEventObject
+>;
+
+export type MintNFTEventFilter = TypedEventFilter<MintNFTEvent>;
 
 export interface NFTReceivedEventObject {
   operator: string;
@@ -406,6 +368,62 @@ export type OwnershipTransferredEvent = TypedEvent<
 
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
+
+export interface SetAPREventObject {
+  from: string;
+  APR: number;
+}
+export type SetAPREvent = TypedEvent<[string, number], SetAPREventObject>;
+
+export type SetAPREventFilter = TypedEventFilter<SetAPREvent>;
+
+export interface TransferERC20EventObject {
+  from: string;
+  to: string;
+  amount: BigNumber;
+}
+export type TransferERC20Event = TypedEvent<
+  [string, string, BigNumber],
+  TransferERC20EventObject
+>;
+
+export type TransferERC20EventFilter = TypedEventFilter<TransferERC20Event>;
+
+export interface TransferNFTEventObject {
+  from: string;
+  to: string;
+  NFTId: BigNumber;
+}
+export type TransferNFTEvent = TypedEvent<
+  [string, string, BigNumber],
+  TransferNFTEventObject
+>;
+
+export type TransferNFTEventFilter = TypedEventFilter<TransferNFTEvent>;
+
+export interface WithdrawERC20EventObject {
+  from: string;
+  to: string;
+  amount: BigNumber;
+}
+export type WithdrawERC20Event = TypedEvent<
+  [string, string, BigNumber],
+  WithdrawERC20EventObject
+>;
+
+export type WithdrawERC20EventFilter = TypedEventFilter<WithdrawERC20Event>;
+
+export interface WithdrawNFTEventObject {
+  from: string;
+  to: string;
+  NFTId: BigNumber;
+}
+export type WithdrawNFTEvent = TypedEvent<
+  [string, string, BigNumber],
+  WithdrawNFTEventObject
+>;
+
+export type WithdrawNFTEventFilter = TypedEventFilter<WithdrawNFTEvent>;
 
 export interface MainContract extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -438,6 +456,8 @@ export interface MainContract extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    deployer(overrides?: CallOverrides): Promise<[string]>;
+
     depositNFT(
       tokenIds: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -458,26 +478,16 @@ export interface MainContract extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    faucet(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     getAPR(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getContractBalance(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    getCurrentTime(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    getEventInfo(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[MainContract.EventInfoStructOutput]>;
-
-    getFaucetBalance(
+    getAccumulatedInterest(
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    getCurrentTime(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getDeployer(overrides?: CallOverrides): Promise<[string]>;
 
     getInterest(
       user: PromiseOrValue<string>,
@@ -511,7 +521,7 @@ export interface MainContract extends BaseContract {
 
     transferNFT(
       to: PromiseOrValue<string>,
-      NFTId: PromiseOrValue<BigNumberish>,
+      tokenIds: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -540,6 +550,8 @@ export interface MainContract extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  deployer(overrides?: CallOverrides): Promise<string>;
+
   depositNFT(
     tokenIds: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -560,26 +572,16 @@ export interface MainContract extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  faucet(
-    amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   getAPR(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getContractBalance(overrides?: CallOverrides): Promise<BigNumber>;
-
-  getCurrentTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-  getEventInfo(
-    index: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<MainContract.EventInfoStructOutput>;
-
-  getFaucetBalance(
+  getAccumulatedInterest(
     user: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  getCurrentTime(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getDeployer(overrides?: CallOverrides): Promise<string>;
 
   getInterest(
     user: PromiseOrValue<string>,
@@ -613,7 +615,7 @@ export interface MainContract extends BaseContract {
 
   transferNFT(
     to: PromiseOrValue<string>,
-    NFTId: PromiseOrValue<BigNumberish>,
+    tokenIds: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -640,6 +642,8 @@ export interface MainContract extends BaseContract {
   callStatic: {
     claimReward(overrides?: CallOverrides): Promise<void>;
 
+    deployer(overrides?: CallOverrides): Promise<string>;
+
     depositNFT(
       tokenIds: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
@@ -660,26 +664,16 @@ export interface MainContract extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    faucet(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     getAPR(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getContractBalance(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getCurrentTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getEventInfo(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<MainContract.EventInfoStructOutput>;
-
-    getFaucetBalance(
+    getAccumulatedInterest(
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getCurrentTime(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getDeployer(overrides?: CallOverrides): Promise<string>;
 
     getInterest(
       user: PromiseOrValue<string>,
@@ -711,7 +705,7 @@ export interface MainContract extends BaseContract {
 
     transferNFT(
       to: PromiseOrValue<string>,
-      NFTId: PromiseOrValue<BigNumberish>,
+      tokenIds: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -737,16 +731,71 @@ export interface MainContract extends BaseContract {
   };
 
   filters: {
+    "ClaimReward(address,address,uint256)"(
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
+      amount?: null
+    ): ClaimRewardEventFilter;
+    ClaimReward(
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
+      amount?: null
+    ): ClaimRewardEventFilter;
+
+    "DepositNFT(address,address,uint256)"(
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
+      NFTId?: PromiseOrValue<BigNumberish> | null
+    ): DepositNFTEventFilter;
+    DepositNFT(
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
+      NFTId?: PromiseOrValue<BigNumberish> | null
+    ): DepositNFTEventFilter;
+
+    "DepositToken(address,address,uint256)"(
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
+      amount?: null
+    ): DepositTokenEventFilter;
+    DepositToken(
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
+      amount?: null
+    ): DepositTokenEventFilter;
+
+    "FaucetERC20(address,address,uint256)"(
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
+      amount?: null
+    ): FaucetERC20EventFilter;
+    FaucetERC20(
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
+      amount?: null
+    ): FaucetERC20EventFilter;
+
+    "MintNFT(address,address,uint256)"(
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
+      NFTId?: PromiseOrValue<BigNumberish> | null
+    ): MintNFTEventFilter;
+    MintNFT(
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
+      NFTId?: PromiseOrValue<BigNumberish> | null
+    ): MintNFTEventFilter;
+
     "NFTReceived(address,address,uint256,bytes)"(
-      operator?: null,
-      from?: null,
-      tokenId?: null,
+      operator?: PromiseOrValue<string> | null,
+      from?: PromiseOrValue<string> | null,
+      tokenId?: PromiseOrValue<BigNumberish> | null,
       data?: null
     ): NFTReceivedEventFilter;
     NFTReceived(
-      operator?: null,
-      from?: null,
-      tokenId?: null,
+      operator?: PromiseOrValue<string> | null,
+      from?: PromiseOrValue<string> | null,
+      tokenId?: PromiseOrValue<BigNumberish> | null,
       data?: null
     ): NFTReceivedEventFilter;
 
@@ -758,12 +807,64 @@ export interface MainContract extends BaseContract {
       previousOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
+
+    "SetAPR(address,uint8)"(
+      from?: PromiseOrValue<string> | null,
+      APR?: null
+    ): SetAPREventFilter;
+    SetAPR(from?: PromiseOrValue<string> | null, APR?: null): SetAPREventFilter;
+
+    "TransferERC20(address,address,uint256)"(
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
+      amount?: null
+    ): TransferERC20EventFilter;
+    TransferERC20(
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
+      amount?: null
+    ): TransferERC20EventFilter;
+
+    "TransferNFT(address,address,uint256)"(
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
+      NFTId?: PromiseOrValue<BigNumberish> | null
+    ): TransferNFTEventFilter;
+    TransferNFT(
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
+      NFTId?: PromiseOrValue<BigNumberish> | null
+    ): TransferNFTEventFilter;
+
+    "WithdrawERC20(address,address,uint256)"(
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
+      amount?: null
+    ): WithdrawERC20EventFilter;
+    WithdrawERC20(
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
+      amount?: null
+    ): WithdrawERC20EventFilter;
+
+    "WithdrawNFT(address,address,uint256)"(
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
+      NFTId?: PromiseOrValue<BigNumberish> | null
+    ): WithdrawNFTEventFilter;
+    WithdrawNFT(
+      from?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
+      NFTId?: PromiseOrValue<BigNumberish> | null
+    ): WithdrawNFTEventFilter;
   };
 
   estimateGas: {
     claimReward(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    deployer(overrides?: CallOverrides): Promise<BigNumber>;
 
     depositNFT(
       tokenIds: PromiseOrValue<BigNumberish>[],
@@ -785,26 +886,16 @@ export interface MainContract extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    faucet(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     getAPR(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getContractBalance(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getCurrentTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getEventInfo(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getFaucetBalance(
+    getAccumulatedInterest(
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getCurrentTime(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getDeployer(overrides?: CallOverrides): Promise<BigNumber>;
 
     getInterest(
       user: PromiseOrValue<string>,
@@ -838,7 +929,7 @@ export interface MainContract extends BaseContract {
 
     transferNFT(
       to: PromiseOrValue<string>,
-      NFTId: PromiseOrValue<BigNumberish>,
+      tokenIds: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -868,6 +959,8 @@ export interface MainContract extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     depositNFT(
       tokenIds: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -888,28 +981,16 @@ export interface MainContract extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    faucet(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     getAPR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getContractBalance(
+    getAccumulatedInterest(
+      user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getCurrentTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getEventInfo(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getFaucetBalance(
-      user: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    getDeployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getInterest(
       user: PromiseOrValue<string>,
@@ -943,7 +1024,7 @@ export interface MainContract extends BaseContract {
 
     transferNFT(
       to: PromiseOrValue<string>,
-      NFTId: PromiseOrValue<BigNumberish>,
+      tokenIds: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -44,7 +44,7 @@ function saveFrontendFiles(
   name: string,
 ) {
   const fs = require('fs');
-  const contractsDir = path.join(
+  const clientDir = path.join(
     __dirname,
     '..',
     '..',
@@ -53,19 +53,39 @@ function saveFrontendFiles(
     'contracts',
   );
 
-  if (!fs.existsSync(contractsDir)) {
-    fs.mkdirSync(contractsDir);
+  const serverDir = path.join(
+    __dirname,
+    '..',
+    '..',
+    'assignment_3_server',
+    'contracts',
+  );
+
+  if (!fs.existsSync(clientDir)) {
+    fs.mkdirSync(clientDir);
+  }
+
+  if (!fs.existsSync(serverDir)) {
+    fs.mkdirSync(serverDir);
   }
 
   fs.writeFileSync(
-    path.join(contractsDir, `${name}-address.json`),
+    path.join(clientDir, `${name}-address.json`),
+    JSON.stringify({ [name]: token.address }, undefined, 2),
+  );
+  fs.writeFileSync(
+    path.join(serverDir, `${name}-address.json`),
     JSON.stringify({ [name]: token.address }, undefined, 2),
   );
 
   const TokenArtifact = artifacts.readArtifactSync(name);
 
   fs.writeFileSync(
-    path.join(contractsDir, `${name}.json`),
+    path.join(clientDir, `${name}.json`),
+    JSON.stringify(TokenArtifact, null, 2),
+  );
+  fs.writeFileSync(
+    path.join(serverDir, `${name}.json`),
     JSON.stringify(TokenArtifact, null, 2),
   );
 }

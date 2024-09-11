@@ -88,7 +88,7 @@ describe('Token contract', function () {
         otherUser,
       } = await loadFixture(deployTokenFixture);
 
-      const balance = await tokenERC20.balanceOf(deployer.address);
+      const balance = await tokenERC20.balanceOf(tokenERC20.address);
       console.log('balance', balance);
 
       expect(await tokenERC20.owner()).to.equal(deployer.address);
@@ -536,7 +536,7 @@ describe('Token contract', function () {
       const balance = await tokenERC20.balanceOf(otherUser[1].address);
       expect(balance).to.equal(ethers.utils.parseUnits('1000', 18));
     }); */
-    /* it('Should transfer 1000 erc20 account 1 to account2', async function () {
+    /* it('Should create NFT = [0,1,2,3,4], remove NFTid [0,1,2]', async function () {
       const {
         TokenERC20Factory,
         tokenERC20,
@@ -548,23 +548,61 @@ describe('Token contract', function () {
         otherUser,
       } = await loadFixture(deployTokenFixture);
       console.log('user 1', otherUser[0].address);
-      await tokenERC721.mint(otherUser[0].address);
+
+      for (let index = 0; index < 5; index++) {
+        await tokenERC721.mint(otherUser[0].address);
+      }
 
       const balance1 = await tokenERC721.balanceOf(otherUser[0].address);
       console.log('balance1', balance1);
 
-      await tokenERC721.connect(otherUser[0]).approve(mainContract.address, 0);
-      await mainContract
+      await tokenERC721
         .connect(otherUser[0])
-        .transferNFT(otherUser[1].address, 0);
-      const balance2 = await tokenERC721.balanceOf(otherUser[0].address);
-      console.log('balance2', balance2);
+        .setApprovalForAll(mainContract.address, true);
 
-      const getEventInfo = await mainContract.getEventInfo(0);
-      console.log('getEventInfo', getEventInfo);
+      await mainContract.connect(otherUser[0]).depositNFT([0, 1, 2, 3, 4]);
+      const depositNFTBefore = await mainContract.depositOfNFT(
+        otherUser[0].address,
+      );
+      console.log('depositNFTBefore', depositNFTBefore);
 
-      const balance = await tokenERC721.balanceOf(otherUser[1].address);
-      expect(balance).to.equal(1);
+      console.log(await tokenERC721.ownerOf(0));
+
+      await mainContract.connect(otherUser[0]).withdrawNFT([0, 1, 2]);
+      const depositNFTAfter = await mainContract.depositOfNFT(
+        otherUser[0].address,
+      );
+      console.log('depositNFTAfter', depositNFTAfter);
+
+      expect(depositNFTAfter.length).to.equal(2);
+    }); */
+    /* it('Should set the right owner', async function () {
+      // We use loadFixture to setup our environment, and then assert that
+      // things went well
+      const {
+        TokenERC20Factory,
+        tokenERC20,
+        TokenERC721Factory,
+        tokenERC721,
+        MainContractFactory,
+        mainContract,
+        deployer,
+        otherUser,
+      } = await loadFixture(deployTokenFixture);
+
+      const balance = await tokenERC20.balanceOf(tokenERC20.address);
+      console.log('balance', balance);
+
+      await tokenERC20
+        .connect(otherUser[0])
+        .faucet(ethers.utils.parseUnits('1000000', 18));
+
+      const otherUser0 = await tokenERC20.balanceOf(otherUser[0].address);
+      console.log('otherUser0', otherUser0);
+
+      expect(await tokenERC20.owner()).to.equal(deployer.address);
+
+      expect(await tokenERC721.owner()).to.equal(deployer.address);
     }); */
   });
 
