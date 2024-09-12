@@ -111,6 +111,7 @@ contract MainContract is Ownable, IERC721Receiver {
 
         uint extraInterest = getInterest(user);
 
+        _tokenErc20.mint(address(this), extraInterest);
         userDeposit.accumulatedInterest += extraInterest;
         userDeposit.lastInterestTime = block.timestamp;
     }

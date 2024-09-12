@@ -28,6 +28,7 @@ const config: any = {
       url: 'https://bsc-testnet.nodereal.io/v1/1234355755e141b1bbf1a81e398793af',
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 97,
+      timeout: 300000,
     },
     bsc_mainnet: {
       url: 'https://bsc-dataseed.binance.org/',

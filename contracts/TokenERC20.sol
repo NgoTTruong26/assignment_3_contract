@@ -9,10 +9,25 @@ contract TokenERC20 is ERC20, Ownable {
 
     uint private constant _MINTDEFAULT = 1000000000;
 
+    address public mainContract;
+
     mapping(address => uint) private _faucetBalances;
 
     constructor(string memory name, string memory symbol) ERC20(name, symbol) {
         _mint(address(this), _MINTDEFAULT * 10 ** decimals());
+    }
+
+    modifier onlyMainContract() {
+        require(msg.sender == mainContract, 'Only MainContract can mint');
+        _;
+    }
+
+    function setMainContract(address _mainContract) external onlyOwner {
+        mainContract = _mainContract;
+    }
+
+    function mint(address to, uint256 amount) external onlyMainContract {
+        _mint(to, amount);
     }
 
     function faucet(uint amount) external {

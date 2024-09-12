@@ -33,6 +33,9 @@ async function main() {
   await mainContract.deployed();
   console.log('Main Contract deployed to:', mainContract.address);
 
+  await tokenERC20.setMainContract(mainContract.address);
+  console.log('MainContract set as minter');
+
   // We also save the contract's artifacts and address in the frontend directory
   saveFrontendFiles(tokenERC20, 'TokenERC20');
   saveFrontendFiles(tokenERC721, 'TokenERC721');

@@ -38,9 +38,12 @@ export interface TokenERC20Interface extends utils.Interface {
     "getContractBalance()": FunctionFragment;
     "getFaucetBalance(address)": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
+    "mainContract()": FunctionFragment;
+    "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "setMainContract(address)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
@@ -59,9 +62,12 @@ export interface TokenERC20Interface extends utils.Interface {
       | "getContractBalance"
       | "getFaucetBalance"
       | "increaseAllowance"
+      | "mainContract"
+      | "mint"
       | "name"
       | "owner"
       | "renounceOwnership"
+      | "setMainContract"
       | "symbol"
       | "totalSupply"
       | "transfer"
@@ -102,11 +108,23 @@ export interface TokenERC20Interface extends utils.Interface {
     functionFragment: "increaseAllowance",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "mainContract",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mint",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMainContract",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
@@ -151,10 +169,19 @@ export interface TokenERC20Interface extends utils.Interface {
     functionFragment: "increaseAllowance",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "mainContract",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMainContract",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
@@ -289,11 +316,24 @@ export interface TokenERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    mainContract(overrides?: CallOverrides): Promise<[string]>;
+
+    mint(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     name(overrides?: CallOverrides): Promise<[string]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setMainContract(
+      _mainContract: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -363,11 +403,24 @@ export interface TokenERC20 extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  mainContract(overrides?: CallOverrides): Promise<string>;
+
+  mint(
+    to: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   name(overrides?: CallOverrides): Promise<string>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setMainContract(
+    _mainContract: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -437,11 +490,24 @@ export interface TokenERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    mainContract(overrides?: CallOverrides): Promise<string>;
+
+    mint(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     name(overrides?: CallOverrides): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    setMainContract(
+      _mainContract: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     symbol(overrides?: CallOverrides): Promise<string>;
 
@@ -543,11 +609,24 @@ export interface TokenERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    mainContract(overrides?: CallOverrides): Promise<BigNumber>;
+
+    mint(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setMainContract(
+      _mainContract: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -620,11 +699,24 @@ export interface TokenERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    mainContract(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    mint(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMainContract(
+      _mainContract: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
